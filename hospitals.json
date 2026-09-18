@@ -1,0 +1,205 @@
+[
+  {
+    "id": 1,
+    "name": "Apollo Care Hospital",
+    "city": "Hyderabad",
+    "area": "Jubilee Hills",
+    "rating": 4.7,
+    "specialties": [
+      "Cardiology",
+      "Neurology",
+      "Orthopedics",
+      "Pediatrics"
+    ],
+    "facilities": [
+      "Emergency",
+      "ICU",
+      "Pharmacy",
+      "Laboratory",
+      "Parking"
+    ],
+    "emergency": "24 hours",
+    "description": "Multi-specialty hospital."
+  },
+  {
+    "id": 2,
+    "name": "Sunrise Multispeciality Hospital",
+    "city": "Hyderabad",
+    "area": "Hitech City",
+    "rating": 4.4,
+    "specialties": [
+      "Cardiology",
+      "Dermatology",
+      "General Medicine"
+    ],
+    "facilities": [
+      "Emergency",
+      "ICU",
+      "Pharmacy",
+      "Parking"
+    ],
+    "emergency": "24 hours",
+    "description": "Modern multispeciality hospital."
+  },
+  {
+    "id": 3,
+    "name": "City Heart Hospital",
+    "city": "Bangalore",
+    "area": "Indiranagar",
+    "rating": 4.8,
+    "specialties": [
+      "Cardiology",
+      "Cardiac Surgery",
+      "Neurology"
+    ],
+    "facilities": [
+      "Emergency",
+      "ICU",
+      "Cath Lab",
+      "Pharmacy",
+      "Parking"
+    ],
+    "emergency": "24 hours",
+    "description": "Specialized heart hospital."
+  },
+  {
+    "id": 4,
+    "name": "Bangalore Care Hospital",
+    "city": "Bangalore",
+    "area": "Whitefield",
+    "rating": 4.3,
+    "specialties": [
+      "Orthopedics",
+      "Pediatrics",
+      "General Medicine"
+    ],
+    "facilities": [
+      "Emergency",
+      "Laboratory",
+      "Pharmacy",
+      "Parking"
+    ],
+    "emergency": "24 hours",
+    "description": "Family-friendly hospital."
+  },
+  {
+    "id": 5,
+    "name": "Chennai Health Center",
+    "city": "Chennai",
+    "area": "T Nagar",
+    "rating": 4.5,
+    "specialties": [
+      "Gynecology",
+      "Pediatrics",
+      "Dermatology"
+    ],
+    "facilities": [
+      "Emergency",
+      "Maternity",
+      "Pharmacy",
+      "Laboratory"
+    ],
+    "emergency": "24 hours",
+    "description": "Women's health hospital."
+  },
+  {
+    "id": 6,
+    "name": "Mumbai Medical Hospital",
+    "city": "Mumbai",
+    "area": "Andheri",
+    "rating": 4.6,
+    "specialties": [
+      "Oncology",
+      "Cardiology",
+      "Neurology"
+    ],
+    "facilities": [
+      "Emergency",
+      "ICU",
+      "Cancer Center",
+      "Pharmacy"
+    ],
+    "emergency": "24 hours",
+    "description": "Advanced medical center."
+  },
+  {
+    "id": 7,
+    "name": "Delhi Advanced Hospital",
+    "city": "Delhi",
+    "area": "Connaught Place",
+    "rating": 4.5,
+    "specialties": [
+      "Neurology",
+      "Orthopedics",
+      "General Medicine"
+    ],
+    "facilities": [
+      "Emergency",
+      "ICU",
+      "Laboratory",
+      "Pharmacy"
+    ],
+    "emergency": "24 hours",
+    "description": "Central Delhi specialist hospital."
+  },
+  {
+    "id": 8,
+    "name": "Goa Wellness Hospital",
+    "city": "Goa",
+    "area": "Panaji",
+    "rating": 4.2,
+    "specialties": [
+      "General Medicine",
+      "Dermatology",
+      "Pediatrics"
+    ],
+    "facilities": [
+      "Emergency",
+      "Pharmacy",
+      "Laboratory",
+      "Parking"
+    ],
+    "emergency": "24 hours",
+    "description": "Healthcare center in Goa."
+  },
+  {
+    "id": 9,
+    "name": "Pune Specialist Hospital",
+    "city": "Pune",
+    "area": "Hinjewadi",
+    "rating": 4.4,
+    "specialties": [
+      "Orthopedics",
+      "Cardiology",
+      "General Medicine"
+    ],
+    "facilities": [
+      "Emergency",
+      "ICU",
+      "Pharmacy",
+      "Parking"
+    ],
+    "emergency": "24 hours",
+    "description": "Specialist hospital near Hinjewadi."
+  },
+  {
+    "id": 10,
+    "name": "Green Life Hospital",
+    "city": "Hyderabad",
+    "area": "Secunderabad",
+    "rating": 4.1,
+    "specialties": [
+      "General Medicine",
+      "Pediatrics",
+      "Gynecology"
+    ],
+    "facilities": [
+      "Emergency",
+      "Pharmacy",
+      "Laboratory",
+      "Parking"
+    ],
+    "emergency": "24 hours",
+    "description": "Affordable family healthcare."
+  }
+]
