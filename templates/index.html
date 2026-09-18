@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic RAG Hospital Assistant | Live Healthcare AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(1200px circle at 15% 10%, #0c1a2e 0%, #060b14 100%);
+      --surface-card: rgba(18, 28, 48, 0.7);
+      --surface-card-hover: rgba(26, 40, 68, 0.85);
+      --surface-glass: rgba(15, 23, 42, 0.65);
+      --border-color: rgba(56, 189, 248, 0.18);
+      --border-color-glow: rgba(56, 189, 248, 0.45);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #0284c7;
+      --primary-light: #38bdf8;
+      --accent: #06b6d4;
+      --emerald: #10b981;
+      --emerald-bg: rgba(16, 185, 129, 0.15);
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --rose-bg: rgba(244, 63, 94, 0.15);
+      --shadow-lg: 0 20px 35px -10px rgba(0, 0, 0, 0.6);
+      --radius-xl: 18px;
+      --radius-lg: 12px;
+      --radius-pill: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation / Header */
+    header {
+      background: var(--surface-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 16px 24px;
+    }
+
+    .nav-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+    }
+
+    .brand-text h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .nav-badges {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .status-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.25); }
+    }
+
+    .render-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--primary-light);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .render-badge:hover {
+      background: rgba(56, 189, 248, 0.25);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+    }
+
+    /* Main Grid Layout */
+    .dashboard {
+      max-width: 1440px;
+      margin: 24px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      flex: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: var(--surface-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+    }
+
+    .panel-title {
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+
+    .pill-counter {
+      background: rgba(56, 189, 248, 0.18);
+      color: var(--primary-light);
+      padding: 2px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Quick Suggestion Chips */
+    .suggestions {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+    }
+
+    .suggestions::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chip:hover {
+      background: rgba(56, 189, 248, 0.16);
+      border-color: var(--primary-light);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* Chat Messages Container */
+    .chat-box {
+      background: rgba(10, 17, 31, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      height: 440px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg-user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+    }
+
+    .msg-bot {
+      align-self: flex-start;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      border-bottom-left-radius: 4px;
+    }
+
+    .tool-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 8px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .chat-hospital-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .chat-hospital-card .h-name {
+      font-weight: 700;
+      color: #fff;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .chat-hospital-card .h-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 4px 0;
+    }
+
+    .chat-hospital-card .h-specs {
+      font-size: 11px;
+      color: var(--primary-light);
+      margin-bottom: 8px;
+    }
+
+    /* Chat Input Form */
+    .input-wrapper {
+      display: flex;
+      gap: 10px;
+      position: relative;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .chat-input:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+    }
+
+    .btn-send {
+      background: linear-gradient(135deg, #0284c7, #06b6d4);
+      border: none;
+      color: #fff;
+      padding: 0 24px;
+      border-radius: var(--radius-lg);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-send:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(6, 182, 212, 0.4);
+    }
+
+    /* Filter Toolbar */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-select, .filter-search {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-color);
+      color: #e2e8f0;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .filter-select:focus, .filter-search:focus {
+      border-color: var(--primary-light);
+    }
+
+    .filter-search {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    /* Hospital List */
+    .hospital-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .hospital-card {
+      background: rgba(18, 28, 48, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .hospital-card:hover {
+      background: var(--surface-card-hover);
+      border-color: var(--border-color-glow);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .h-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .h-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .h-location {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .rating-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .h-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag-spec {
+      font-size: 11px;
+      padding: 3px 9px;
+      background: rgba(2, 132, 199, 0.14);
+      color: #38bdf8;
+      border-radius: 6px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .tag-fac {
+      font-size: 11px;
+      padding: 3px 8px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #94a3b8;
+      border-radius: 6px;
+    }
+
+    .h-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 10px;
+    }
+
+    .emergency-status {
+      font-size: 11px;
+      font-weight: 600;
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-book {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border: none;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-book:hover {
+      background: #38bdf8;
+      color: #0c1a2e;
+    }
+
+    /* Appointments Section */
+    .tabs-row {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary-light);
+    }
+
+    .appointment-item {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .apt-info h4 {
+      font-size: 14px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .apt-id {
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--primary-light);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .apt-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .status-confirmed {
+      font-size: 11px;
+      font-weight: 700;
+      color: #10b981;
+      background: var(--emerald-bg);
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+    }
+
+    .status-cancelled {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f43f5e;
+      background: var(--rose-bg);
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+    }
+
+    .btn-cancel {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: #fb7185;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+      background: rgba(244, 63, 94, 0.3);
+      color: #fff;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-box {
+      background: #0f172a;
+      border: 1px solid var(--border-color-glow);
+      border-radius: var(--radius-xl);
+      max-width: 480px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-light);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #cbd5e1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #06b6d4);
+      border: none;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 18px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+
+    footer a {
+      color: var(--primary-light);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="brand">
+        <div class="brand-icon">🏥</div>
+        <div class="brand-text">
+          <h1>Agentic RAG Hospital Assistant</h1>
+          <p>Autonomous Medical Discovery & Appointment Management</p>
+        </div>
+      </a>
+      <div class="nav-badges">
+        <div class="status-pill">
+          <span class="status-pulse"></span>
+          <span id="health-status">System Healthy</span>
+        </div>
+        <a id="render-live-link" href="https://agentic-rag-hospital-assistant.onrender.com" target="_blank" class="render-badge">
+          <span>🚀 Render Live Link</span>
+          <span style="font-size: 10px;">↗</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Grid -->
+  <main class="dashboard">
+    <!-- Left Column: Agentic Chat Assistant -->
+    <section class="glass-panel" aria-label="AI Assistant Interface">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <span>🤖 Healthcare Intelligence Agent</span>
+        </h2>
+        <span class="pill-counter">Vector RAG + Tool Dispatch</span>
+      </div>
+
+      <!-- Quick prompts -->
+      <div class="suggestions">
+        <button class="chip" onclick="sendPrompt('Find best cardiology hospitals in Hyderabad')">❤️ Cardiology in Hyderabad</button>
+        <button class="chip" onclick="sendPrompt('I need 24 hours emergency ICU hospital in Mumbai')">🚨 24/7 ICU in Mumbai</button>
+        <button class="chip" onclick="sendPrompt('Find top rated pediatric hospital in Bangalore')">👶 Pediatrics in Bangalore</button>
+        <button class="chip" onclick="sendPrompt('Book appointment for Rahul at Apollo Care Hospital')">📅 Book at Apollo</button>
+        <button class="chip" onclick="sendPrompt('Show my appointments')">📋 My Appointments</button>
+        <button class="chip" onclick="sendPrompt('Cancel my latest appointment')">❌ Cancel Appointment</button>
+      </div>
+
+      <!-- Chat Feed -->
+      <div class="chat-box" id="chat-messages">
+        <div class="message msg-bot">
+          <span class="tool-badge">⚡ Agent Ready</span>
+          <p>Hello! I am your <b>Agentic RAG Healthcare Assistant</b>. You can describe your medical symptoms, search for hospitals by city or specialty, or manage bookings seamlessly.</p>
+        </div>
+      </div>
+
+      <!-- Input Bar -->
+      <form class="input-wrapper" onsubmit="handleSend(event)">
+        <input 
+          type="text" 
+          id="chat-input" 
+          class="chat-input" 
+          placeholder="e.g. 'I have joint and knee pain in Bangalore' or 'Book appointment at Sunrise Hospital'..." 
+          autocomplete="off"
+        >
+        <button type="submit" class="btn-send" id="btn-submit">
+          <span>Ask</span>
+          <span>➤</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- Right Column: Hospital Directory & Appointments -->
+    <section class="glass-panel" aria-label="Hospital Directory & Appointments">
+      <div class="panel-header">
+        <div class="tabs-row">
+          <button class="tab-btn active" id="tab-btn-hospitals" onclick="switchTab('hospitals')">🏥 Hospital Directory</button>
+          <button class="tab-btn" id="tab-btn-appointments" onclick="switchTab('appointments')">📅 Appointments (<span id="apt-count-badge">0</span>)</button>
+        </div>
+      </div>
+
+      <!-- Hospitals Tab Content -->
+      <div id="tab-content-hospitals" style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Filters -->
+        <div class="filter-bar">
+          <select id="filter-city" class="filter-select" onchange="applyFilters()">
+            <option value="">All Cities</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Bangalore">Bangalore</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Chennai">Chennai</option>
+            <option value="Pune">Pune</option>
+            <option value="Goa">Goa</option>
+          </select>
+
+          <select id="filter-spec" class="filter-select" onchange="applyFilters()">
+            <option value="">All Specialties</option>
+            <option value="Cardiology">Cardiology</option>
+            <option value="Cardiac Surgery">Cardiac Surgery</option>
+            <option value="Neurology">Neurology</option>
+            <option value="Orthopedics">Orthopedics</option>
+            <option value="Pediatrics">Pediatrics</option>
+            <option value="Dermatology">Dermatology</option>
+            <option value="Oncology">Oncology</option>
+            <option value="Gynecology">Gynecology</option>
+            <option value="General Medicine">General Medicine</option>
+          </select>
+
+          <input 
+            type="text" 
+            id="filter-search" 
+            class="filter-search" 
+            placeholder="Search hospitals..." 
+            oninput="applyFilters()"
+          >
+        </div>
+
+        <!-- Cards List -->
+        <div class="hospital-list" id="hospital-cards-container">
+          <div style="text-align: center; padding: 20px; color: var(--text-muted);">Loading hospitals...</div>
+        </div>
+      </div>
+
+      <!-- Appointments Tab Content -->
+      <div id="tab-content-appointments" style="display: none; flex-direction: column; gap: 14px;">
+        <div class="hospital-list" id="appointments-container">
+          <div style="text-align: center; padding: 20px; color: var(--text-muted);">No appointments booked yet.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Booking Modal -->
+  <div class="modal-backdrop" id="booking-modal" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-box">
+      <div class="modal-title">
+        <span>Book Hospital Appointment</span>
+        <button style="background:none;border:none;color:#94a3b8;font-size:20px;cursor:pointer;" onclick="closeModal()">✕</button>
+      </div>
+      <form class="modal-form" onsubmit="submitBooking(event)">
+        <input type="hidden" id="modal-hospital-id">
+        <div class="form-group">
+          <label>Selected Hospital</label>
+          <input type="text" id="modal-hospital-name" class="form-control" readonly style="opacity:0.8;">
+        </div>
+        <div class="form-group">
+          <label>Patient Full Name</label>
+          <input type="text" id="modal-patient-name" class="form-control" required placeholder="e.g. John Doe">
+        </div>
+        <div class="form-group">
+          <label>Doctor / Specialty</label>
+          <select id="modal-doctor" class="form-control">
+            <option value="Chief Cardiologist">Chief Cardiologist</option>
+            <option value="Senior Orthopedic Surgeon">Senior Orthopedic Surgeon</option>
+            <option value="Neurology Specialist">Neurology Specialist</option>
+            <option value="Pediatric Consultant">Pediatric Consultant</option>
+            <option value="General Physician">General Physician</option>
+          </select>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="modal-date" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Preferred Time</label>
+            <select id="modal-time" class="form-control">
+              <option value="09:30 AM">09:30 AM</option>
+              <option value="11:00 AM">11:00 AM</option>
+              <option value="02:30 PM">02:30 PM</option>
+              <option value="04:00 PM">04:00 PM</option>
+              <option value="06:00 PM">06:00 PM</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="btn-confirm-booking">Confirm Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>Agentic RAG Hospital Assistant &bull; Render Cloud Web Service &bull; <a href="https://agentic-rag-hospital-assistant.onrender.com" target="_blank">agentic-rag-hospital-assistant.onrender.com</a></p>
+  </footer>
+
+  <script>
+    let allHospitals = [];
+    let allAppointments = [];
+
+    // Initialize date picker default to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('modal-date').value = tomorrow.toISOString().split('T')[0];
+
+    async function checkHealth() {
+      try {
+        const res = await fetch('/health');
+        const data = await res.json();
+        if (data.status === 'healthy') {
+          document.getElementById('health-status').textContent = `Healthy • ${data.hospitals_loaded} Hospitals`;
+        }
+      } catch (err) {
+        document.getElementById('health-status').textContent = 'Local Dev Mode';
+      }
+    }
+
+    async function loadHospitals() {
+      try {
+        const res = await fetch('/api/hospitals');
+        const data = await res.json();
+        allHospitals = data.hospitals || [];
+        renderHospitals(allHospitals);
+      } catch (e) {
+        document.getElementById('hospital-cards-container').innerHTML = `<div style="color:#f87171;padding:20px;">Failed to load hospitals.</div>`;
+      }
+    }
+
+    async function loadAppointments() {
+      try {
+        const res = await fetch('/api/patients');
+        const data = await res.json();
+        allAppointments = data.patients || [];
+        document.getElementById('apt-count-badge').textContent = allAppointments.length;
+        renderAppointments(allAppointments);
+      } catch (e) {
+        console.error("Failed to load appointments", e);
+      }
+    }
+
+    function renderHospitals(list) {
+      const container = document.getElementById('hospital-cards-container');
+      if (!list.length) {
+        container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-muted)">No hospitals match your filter criteria.</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(h => `
+        <div class="hospital-card">
+          <div class="h-top">
+            <div>
+              <div class="h-title">${h.name}</div>
+              <div class="h-location">📍 ${h.city} &bull; ${h.area}</div>
+            </div>
+            <div class="rating-badge">★ ${h.rating.toFixed(1)}</div>
+          </div>
+          <div class="h-tags">
+            ${(h.specialties || []).map(s => `<span class="tag-spec">${s}</span>`).join('')}
+            ${(h.facilities || []).slice(0, 3).map(f => `<span class="tag-fac">${f}</span>`).join('')}
+          </div>
+          <div class="h-footer">
+            <span class="emergency-status">🚨 Emergency: ${h.emergency || '24 hours'}</span>
+            <button class="btn-book" onclick="openBookingModal(${h.id}, '${h.name.replace(/'/g, "\\'")}')">Book Visit</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderAppointments(list) {
+      const container = document.getElementById('appointments-container');
+      if (!list.length) {
+        container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-muted)">No appointments booked yet. Click "Book Visit" on any hospital card or ask the AI assistant!</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(apt => `
+        <div class="appointment-item">
+          <div class="apt-info">
+            <h4>
+              <span>${apt.hospital_name}</span>
+              <span class="${apt.status === 'Confirmed' ? 'status-confirmed' : 'status-cancelled'}">${apt.status}</span>
+            </h4>
+            <div class="apt-meta">
+              👤 <b>${apt.patient_name}</b> &bull; 🩺 ${apt.doctor} &bull; 📅 ${apt.appointment_date} ${apt.appointment_time ? 'at ' + apt.appointment_time : ''}
+            </div>
+            <div style="margin-top:4px;">
+              <span class="apt-id">${apt.appointment_id}</span>
+            </div>
+          </div>
+          ${apt.status === 'Confirmed' ? `
+            <button class="btn-cancel" onclick="cancelAppointment('${apt.appointment_id}')">Cancel</button>
+          ` : ''}
+        </div>
+      `).reverse().join('');
+    }
+
+    function applyFilters() {
+      const city = document.getElementById('filter-city').value.toLowerCase();
+      const spec = document.getElementById('filter-spec').value.toLowerCase();
+      const search = document.getElementById('filter-search').value.toLowerCase();
+
+      const filtered = allHospitals.filter(h => {
+        const matchesCity = !city || h.city.toLowerCase() === city;
+        const matchesSpec = !spec || (h.specialties || []).some(s => s.toLowerCase() === spec);
+        const matchesSearch = !search || JSON.stringify(h).toLowerCase().includes(search);
+        return matchesCity && matchesSpec && matchesSearch;
+      });
+
+      renderHospitals(filtered);
+    }
+
+    function switchTab(tab) {
+      const isHospitals = tab === 'hospitals';
+      document.getElementById('tab-btn-hospitals').classList.toggle('active', isHospitals);
+      document.getElementById('tab-btn-appointments').classList.toggle('active', !isHospitals);
+      document.getElementById('tab-content-hospitals').style.display = isHospitals ? 'flex' : 'none';
+      document.getElementById('tab-content-appointments').style.display = isHospitals ? 'none' : 'flex';
+      if (!isHospitals) loadAppointments();
+    }
+
+    function sendPrompt(text) {
+      document.getElementById('chat-input').value = text;
+      handleSend(new Event('submit'));
+    }
+
+    async function handleSend(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const query = input.value.trim();
+      if (!query) return;
+
+      appendMessage(query, 'user');
+      input.value = '';
+      input.disabled = true;
+      document.getElementById('btn-submit').disabled = true;
+
+      const loadingBubble = appendLoadingMessage();
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: query })
+        });
+        const data = await res.json();
+        loadingBubble.remove();
+
+        renderAgentResponse(data);
+        loadAppointments();
+      } catch (err) {
+        loadingBubble.remove();
+        appendMessage('⚠️ Error communicating with the assistant service.', 'bot');
+      } finally {
+        input.disabled = false;
+        document.getElementById('btn-submit').disabled = false;
+        input.focus();
+      }
+    }
+
+    function appendMessage(text, sender) {
+      const chatBox = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = `message msg-${sender}`;
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      return div;
+    }
+
+    function appendLoadingMessage() {
+      const chatBox = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = 'message msg-bot';
+      div.innerHTML = `<span class="tool-badge">🧠 Reasoning...</span> Thinking & retrieving data...`;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      return div;
+    }
+
+    function renderAgentResponse(data) {
+      const chatBox = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = 'message msg-bot';
+
+      const toolName = data.tool || 'Agent Decision';
+      let html = `<span class="tool-badge">⚡ Tool Executed: ${toolName}</span><p>${data.message || ''}</p>`;
+
+      if (data.hospitals && data.hospitals.length) {
+        html += data.hospitals.map(h => `
+          <div class="chat-hospital-card">
+            <div class="h-name">
+              <span>${h.name}</span>
+              <span style="color:#fbbf24;font-size:12px;">★ ${h.rating.toFixed(1)}</span>
+            </div>
+            <div class="h-meta">📍 ${h.city} (${h.area}) &bull; 🚨 ${h.emergency || '24h'}</div>
+            <div class="h-specs">Specialties: ${(h.specialties || []).join(', ')}</div>
+            <button class="btn-book" style="margin-top:4px;" onclick="openBookingModal(${h.id}, '${h.name.replace(/'/g, "\\'")}')">Book Appointment</button>
+          </div>
+        `).join('');
+      }
+
+      if (data.appointment) {
+        const apt = data.appointment;
+        html += `
+          <div class="chat-hospital-card" style="border-color:${apt.status === 'Cancelled' ? 'var(--rose)' : 'var(--emerald)'}">
+            <div class="h-name">
+              <span>${apt.hospital_name}</span>
+              <span class="${apt.status === 'Confirmed' ? 'status-confirmed' : 'status-cancelled'}">${apt.status}</span>
+            </div>
+            <div class="h-meta">Patient: <b>${apt.patient_name}</b> &bull; Doctor: ${apt.doctor}</div>
+            <div class="h-meta">ID: <span class="apt-id">${apt.appointment_id}</span></div>
+          </div>
+        `;
+      }
+
+      if (data.patients && data.patients.length) {
+        html += `<div style="margin-top:8px;font-size:12px;color:var(--primary-light);">Displaying ${data.patients.length} records. Check the Appointments tab for full controls.</div>`;
+      }
+
+      div.innerHTML = html;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Modal Operations
+    function openBookingModal(hospitalId, hospitalName) {
+      document.getElementById('modal-hospital-id').value = hospitalId;
+      document.getElementById('modal-hospital-name').value = hospitalName;
+      document.getElementById('booking-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('booking-modal').style.display = 'none';
+    }
+
+    function closeModalOnBackdrop(e) {
+      if (e.target.id === 'booking-modal') closeModal();
+    }
+
+    async function submitBooking(e) {
+      e.preventDefault();
+      const hospitalId = document.getElementById('modal-hospital-id').value;
+      const hospitalName = document.getElementById('modal-hospital-name').value;
+      const patientName = document.getElementById('modal-patient-name').value.trim();
+      const doctor = document.getElementById('modal-doctor').value;
+      const date = document.getElementById('modal-date').value;
+      const time = document.getElementById('modal-time').value;
+
+      const btn = document.getElementById('btn-confirm-booking');
+      btn.disabled = true;
+      btn.textContent = "Booking...";
+
+      try {
+        const res = await fetch('/api/appointments/book', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            hospital_id: hospitalId,
+            patient_name: patientName,
+            doctor: doctor,
+            appointment_date: date,
+            appointment_time: time
+          })
+        });
+        const data = await res.json();
+        closeModal();
+
+        if (data.success) {
+          appendMessage(`Book appointment for ${patientName} at ${hospitalName}`, 'user');
+          renderAgentResponse(data);
+          loadAppointments();
+          switchTab('appointments');
+        } else {
+          alert(data.message || 'Failed to book appointment.');
+        }
+      } catch (err) {
+        alert('Error connecting to server.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Confirm Booking";
+      }
+    }
+
+    async function cancelAppointment(aptId) {
+      if (!confirm(`Are you sure you want to cancel appointment ${aptId}?`)) return;
+
+      try {
+        const res = await fetch('/api/appointments/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ appointment_id: aptId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          appendMessage(`Cancel appointment ${aptId}`, 'user');
+          renderAgentResponse(data);
+          loadAppointments();
+        } else {
+          alert(data.message || 'Cancellation failed.');
+        }
+      } catch (err) {
+        alert('Server connection error.');
+      }
+    }
+
+    // Initial load
+    checkHealth();
+    loadHospitals();
+    loadAppointments();
+  </script>
+</body>
+</html>
